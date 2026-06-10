@@ -58,11 +58,11 @@ export default function Home() {
       if (res.ok && data.code) {
         router.push(`/game/${data.code}`);
       } else {
-        alert(data.error || 'Erreur lors de la connexion');
+        alert(`Erreur : ${data.error || 'Problème de connexion'}`);
         setLoading(false);
       }
-    } catch (error) {
-      alert("Impossible de rejoindre la partie. Vérifie le code.");
+    } catch (error: any) {
+      alert(`Erreur technique : ${error.message}`);
       setLoading(false);
     }
   };

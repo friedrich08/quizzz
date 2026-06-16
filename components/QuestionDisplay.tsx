@@ -11,27 +11,44 @@ interface QuestionDisplayProps {
 }
 
 export default function QuestionDisplay({ question, phase, onTimeUp, revealAnswer }: QuestionDisplayProps) {
-  const [timer, setTimer] = useState(15);
+  const [timer, setTimer] = useState(30);
+  const [displayText, setDisplayText] = useState('');
 
   useEffect(() => {
     if (!question || revealAnswer) {
-      setTimer(15);
+      setTimer(30);
+      setDisplayText('');
       return;
     }
 
-    setTimer(15);
+    setTimer(30);
+    setDisplayText('');
 
-    const interval = setInterval(() => {
+    // Effet de machine à écrire
+    let index = 0;
+    const typingInterval = setInterval(() => {
+      setDisplayText(question.question.substring(0, index));
+      index += 2; // On avance de 2 caractères pour plus de fluidité
+      if (index > question.question.length + 1) {
+        setDisplayText(question.question);
+        clearInterval(typingInterval);
+      }
+    }, 40);
+
+    const timerInterval = setInterval(() => {
       setTimer((prev) => {
         if (prev <= 1) {
-          clearInterval(interval);
+          clearInterval(timerInterval);
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(typingInterval);
+      clearInterval(timerInterval);
+    };
   }, [question, revealAnswer]);
 
   // Déclencher onTimeUp en dehors de l'updater de state pour éviter les effets de bord
@@ -59,8 +76,8 @@ export default function QuestionDisplay({ question, phase, onTimeUp, revealAnswe
   }
 
   return (
-    <div className="bg-white border-4 border-blue-500 rounded-2xl p-8 shadow-xl relative overflow-hidden">
-      <div className="absolute top-0 left-0 h-2 bg-blue-500 transition-all duration-1000" style={{ width: `${(timer / 15) * 100}%` }} />
+    <div className="bg-white border-4 border-blue-500 rounded-2xl p-8 shadow-xl relative overflow-hidden min-h-[200px] flex flex-col justify-center">
+      <div className="absolute top-0 left-0 h-2 bg-blue-500 transition-all duration-1000" style={{ width: `${(timer / 30) * 100}%` }} />
       
       <div className="flex justify-between items-center mb-4">
         <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-bold uppercase">
@@ -71,8 +88,9 @@ export default function QuestionDisplay({ question, phase, onTimeUp, revealAnswe
         </span>
       </div>
 
-      <h2 className="text-3xl font-bold text-gray-800 leading-tight">
-        {question.question}
+      <h2 className="text-2xl md:text-3xl font-bold text-gray-800 leading-tight">
+        {displayText}
+        <span className="animate-pulse ml-1">|</span>
       </h2>
     </div>
   );

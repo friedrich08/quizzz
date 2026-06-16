@@ -24,16 +24,19 @@ export async function POST(
 
   const correctAnswer = game.currentQuestion?.correct_answer || "";
 
+  // CAS : TEMPS ÉCOULÉ
   if (isTimeUp) {
-    await pusherServer.trigger(`game-${code}`, 'answer-result', {
-      isCorrect: false,
-      revealAnswer: correctAnswer,
-      isTimeUp: true
-    });
     game.currentQuestion = null;
     game.buzzerLockedBy = null;
     game.attempts = 0;
     await setGame(code, game);
+
+    await pusherServer.trigger(`game-${code}`, 'answer-result', {
+      isCorrect: false,
+      revealAnswer: correctAnswer,
+      isTimeUp: true,
+      autoNext: true // Signal pour charger la suivante
+    });
     return NextResponse.json({ success: true });
   }
 
@@ -42,37 +45,40 @@ export async function POST(
 
   const normUser = normalize(answer || "");
   const normTarget = normalize(correctAnswer);
-
   const dist = distance(normUser, normTarget);
   const threshold = normTarget.length > 5 ? 2 : 1;
 
   let isCorrect = (normUser === normTarget) || (dist <= threshold);
 
   if (game.phase === 'C' && game.letter) {
-    if (!normUser.startsWith(game.letter.toLowerCase())) {
-      isCorrect = false;
-    }
+    if (!normUser.startsWith(game.letter.toLowerCase())) isCorrect = false;
   }
 
   if (isCorrect) {
+    // Calcul des points (A:10, B:20, C:10)
     let basePoints = (game.phase === 'B' ? 20 : 10);
-    let points = game.attempts >= 1 ? basePoints / 2 : basePoints;
+    // 2ème essai = moitié des points
+    let awardedPoints = game.attempts >= 1 ? basePoints / 2 : basePoints;
     
-    player.score += points;
+    player.score += awardedPoints;
     
+    game.buzzerLockedBy = null;
+    game.currentQuestion = null;
+    game.attempts = 0;
+    
+    // ON SAUVEGARDE AVANT DE TRIGER
+    await setGame(code, game);
+
     await pusherServer.trigger(`game-${code}`, 'answer-result', {
       isCorrect: true,
       playerId: player.id,
       revealAnswer: correctAnswer,
       scores: game.players.map(p => ({ id: p.id, score: p.score })),
+      autoNext: true
     });
-    
-    game.buzzerLockedBy = null;
-    game.currentQuestion = null;
-    game.attempts = 0;
   } else {
     game.attempts += 1;
-    game.buzzerLockedBy = null;
+    game.buzzerLockedBy = null; // Libère le buzzer pour les autres
 
     const shouldReveal = game.attempts >= 2;
     if (shouldReveal) {
@@ -80,14 +86,16 @@ export async function POST(
         game.attempts = 0;
     }
 
+    await setGame(code, game);
+
     await pusherServer.trigger(`game-${code}`, 'answer-result', {
       isCorrect: false,
       playerId: player.id,
-      revealAnswer: shouldReveal ? correctAnswer : null,
+      revealAnswer: shouldReveal ? correctAnswer : null, // Uniquement si 2 erreurs
       attempts: game.attempts,
+      autoNext: shouldReveal
     });
   }
 
-  await setGame(code, game);
   return NextResponse.json({ success: true });
 }

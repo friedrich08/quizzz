@@ -2,22 +2,44 @@ import { NextResponse } from 'next/server';
 import { getGame, setGame } from '@/lib/game-state';
 import { pusherServer } from '@/lib/pusher';
 import { Question, Phase } from '@/types/game';
+import fs from 'fs';
+import path from 'path';
 
-const CATEGORIES = ['9', '11', '12', '17', '21', '22', '23'];
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-async function translateToFrench(text: string): Promise<string> {
-  try {
-    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|fr`);
-    const data = await res.json();
-    return data.responseData.translatedText || text;
-  } catch (e) {
-    return text;
+// Chargement des questions locales
+const questionsPath = path.join(process.cwd(), 'data', 'questions.json');
+let allQuestions: any[] = [];
+
+try {
+  if (fs.existsSync(questionsPath)) {
+    allQuestions = JSON.parse(fs.readFileSync(questionsPath, 'utf8'));
   }
+} catch (e) {
+  console.error("Erreur chargement questions:", e);
 }
 
-function decodeHtml(html: string) {
-  return html.replace(/&quot;/g, '"').replace(/&#039;/g, "'").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+function toLongQuestion(q: any): string {
+  let longQ = `[${q.theme}] Top ! `;
+  
+  // Utilisation de l'anecdote comme premier indice s'il est assez long
+  if (q.anecdote && q.anecdote.length > 15) {
+    const lowerAns = q.answer.toLowerCase();
+    const lowerAnecdote = q.anecdote.toLowerCase();
+    
+    // Si l'anecdote contient la réponse, on la masque pour ne pas spoiler
+    let cleanAnecdote = q.anecdote;
+    if (lowerAnecdote.includes(lowerAns)) {
+      const regex = new RegExp(q.answer, 'gi');
+      cleanAnecdote = q.anecdote.replace(regex, "...");
+    }
+    longQ += cleanAnecdote + " ";
+  }
+  
+  longQ += q.question;
+  if (!longQ.includes('?')) longQ += " ?";
+  
+  return longQ;
 }
 
 export async function POST(request: Request) {
@@ -26,6 +48,7 @@ export async function POST(request: Request) {
     const game = await getGame(code);
     if (!game) return NextResponse.json({ error: 'Game not found' }, { status: 404 });
 
+    // 1. Gestion des phases (10 questions max par phase)
     if (game.questionCount >= 10 || game.phase === 'LOBBY') {
       let nextPhase: Phase = 'A';
       if (game.phase === 'A') nextPhase = 'B';
@@ -43,7 +66,9 @@ export async function POST(request: Request) {
       }
 
       if (nextPhase === 'B') {
-        game.category = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+        // Sélection de 4 thèmes aléatoires parmis les questions dispo
+        const themes = [...new Set(allQuestions.map(q => q.theme))];
+        game.category = themes[Math.floor(Math.random() * themes.length)];
       } else if (nextPhase === 'C') {
         game.letter = LETTERS[Math.floor(Math.random() * LETTERS.length)];
       }
@@ -55,35 +80,30 @@ export async function POST(request: Request) {
       });
     }
 
-    let url = `https://opentdb.com/api.php?amount=1&type=multiple&difficulty=easy`;
-    if (game.phase === 'B' && game.category) url += `&category=${game.category}`;
+    // 2. Sélection de la question dans la base locale
+    let filtered = allQuestions;
 
-    let selectedQuestion: Question | null = null;
-    let attempts = 0;
-
-    while (!selectedQuestion && attempts < 10) {
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (data.results && data.results.length > 0) {
-        let q = data.results[0];
-        q.question = decodeHtml(q.question);
-        q.correct_answer = decodeHtml(q.correct_answer);
-        q.incorrect_answers = q.incorrect_answers.map(decodeHtml);
-
-        q.question = await translateToFrench(q.question);
-        q.correct_answer = await translateToFrench(q.correct_answer);
-
-        if (game.phase === 'C' && game.letter) {
-          if (q.correct_answer.toLowerCase().trim().startsWith(game.letter.toLowerCase())) {
-            selectedQuestion = q;
-          }
-        } else {
-          selectedQuestion = q;
-        }
-      }
-      attempts++;
+    if (game.phase === 'B' && game.category) {
+      filtered = allQuestions.filter(q => q.theme === game.category);
+    } else if (game.phase === 'C' && game.letter) {
+      filtered = allQuestions.filter(q => 
+        q.answer.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").startsWith(game.letter!.toLowerCase())
+      );
     }
+
+    if (filtered.length === 0) filtered = allQuestions; // Fallback
+
+    const randomIdx = Math.floor(Math.random() * filtered.length);
+    const rawQ = filtered[randomIdx];
+
+    const selectedQuestion: Question = {
+      category: rawQ.theme,
+      type: 'multiple',
+      difficulty: rawQ.difficulty,
+      question: toLongQuestion(rawQ),
+      correct_answer: rawQ.answer,
+      incorrect_answers: rawQ.propositions.filter((p: string) => p !== rawQ.answer)
+    };
 
     if (selectedQuestion) {
       game.currentQuestion = selectedQuestion;
@@ -93,6 +113,7 @@ export async function POST(request: Request) {
       game.questionCount += 1;
       await setGame(code, game);
 
+      // On cache la réponse pour l'envoi Pusher
       const questionForPlayers = { ...selectedQuestion, correct_answer: '???' };
 
       await pusherServer.trigger(`game-${code}`, 'question-start', {
@@ -104,8 +125,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     }
 
-    return NextResponse.json({ error: 'Failed to find question' }, { status: 404 });
+    return NextResponse.json({ error: 'Pas de question trouvée' }, { status: 404 });
   } catch (error) {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    console.error("[API ERROR]", error);
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
 }

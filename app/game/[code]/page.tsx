@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getPusherClient } from '@/lib/pusher';
 import { GameState, Player, Phase, Question } from '@/types/game';
@@ -33,6 +33,25 @@ export default function GameRoom({ params }: { params: { code: string } }) {
   const [loadingQuestion, setLoadingQuestion] = useState(false);
   const [lastBuzzerId, setLastBuzzerId] = useState<string | null>(null);
 
+  // Ref pour éviter les problèmes de fermeture sur les fonctions asynchrones
+  const isHostRef = useRef(isHost);
+  useEffect(() => { isHostRef.current = isHost; }, [isHost]);
+
+  const handleNextQuestion = async () => {
+    if (loadingQuestion) return;
+    setLoadingQuestion(true);
+    try {
+      await fetch('/api/questions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+    } catch (e) {
+      console.error(e);
+      setLoadingQuestion(false);
+    }
+  };
+
   useEffect(() => {
     const fetchInitialState = async () => {
       try {
@@ -41,9 +60,7 @@ export default function GameRoom({ params }: { params: { code: string } }) {
           const data = await res.json();
           setGameState(data);
         }
-      } catch (e) {
-        console.error("Erreur chargement état initial", e);
-      }
+      } catch (e) {}
     };
     fetchInitialState();
   }, [code]);
@@ -78,28 +95,36 @@ export default function GameRoom({ params }: { params: { code: string } }) {
       setLastBuzzerId(data.userId);
     });
 
-    channel.bind('answer-result', (data: { isCorrect: boolean; playerId: string; revealAnswer?: string; scores?: any; attempts?: number }) => {
+    channel.bind('answer-result', (data: { isCorrect: boolean; playerId: string; revealAnswer?: string; scores?: any; attempts?: number, autoNext?: boolean }) => {
+      // 1. Mise à jour de la réponse révélée
       if (data.revealAnswer) {
         setRevealAnswer(data.revealAnswer);
         setTimeout(() => setRevealAnswer(null), 4000);
       }
 
-      if (data.isCorrect) {
+      // 2. Mise à jour des scores
+      if (data.scores) {
         setGameState(prev => ({
           ...prev,
-          currentQuestion: null,
-          buzzerLockedBy: null,
           players: prev.players?.map(p => {
-            const newScore = data.scores?.find((s: any) => s.id === p.id)?.score;
+            const newScore = data.scores.find((s: any) => s.id === p.id)?.score;
             return newScore !== undefined ? { ...p, score: newScore } : p;
-          }),
+          })
         }));
+      }
+
+      // 3. Gestion de l'état du tour
+      if (data.isCorrect || (data.attempts && data.attempts >= 2) || data.revealAnswer) {
+        setGameState(prev => ({ ...prev, buzzerLockedBy: null, currentQuestion: null }));
       } else {
-        // Mauvaise réponse : on libère le buzzer pour les AUTRES
         setGameState(prev => ({ ...prev, buzzerLockedBy: null }));
-        if (data.attempts !== undefined && data.attempts >= 2) {
-          setGameState(prev => ({ ...prev, currentQuestion: null }));
-        }
+      }
+
+      // 4. AUTOMATISATION : Question suivante après 5 secondes si c'est fini
+      if (data.autoNext && isHostRef.current) {
+        setTimeout(() => {
+          handleNextQuestion();
+        }, 5000);
       }
     });
 
@@ -122,20 +147,13 @@ export default function GameRoom({ params }: { params: { code: string } }) {
   }, [code]);
 
   const handleBuzz = async () => {
-    // On ne peut pas buzzer si : 
-    // - Pas d'ID utilisateur
-    // - Le buzzer est déjà pris
-    // - On est en train de révéler une réponse
-    // - On est celui qui vient d'échouer (lastBuzzerId)
     if (!userId || gameState.buzzerLockedBy || revealAnswer || loadingQuestion || lastBuzzerId === userId) return;
     try {
       await fetch(`/api/game/${code}/buzz`, {
         method: 'POST',
         body: JSON.stringify({ userId }),
       });
-    } catch (e) {
-      console.error("Erreur buzz", e);
-    }
+    } catch (e) {}
   };
 
   const submitAnswer = async () => {
@@ -146,9 +164,7 @@ export default function GameRoom({ params }: { params: { code: string } }) {
         body: JSON.stringify({ userId, answer }),
       });
       setAnswer('');
-    } catch (e) {
-      console.error("Erreur réponse", e);
-    }
+    } catch (e) {}
   };
 
   const handleTimeUp = async () => {
@@ -158,22 +174,7 @@ export default function GameRoom({ params }: { params: { code: string } }) {
           method: 'POST',
           body: JSON.stringify({ isTimeUp: true }),
         });
-      } catch (e) {
-        console.error("Erreur timeup", e);
-      }
-    }
-  };
-
-  const handleNextQuestion = async () => {
-    setLoadingQuestion(true);
-    try {
-      await fetch('/api/questions', {
-        method: 'POST',
-        body: JSON.stringify({ code }),
-      });
-    } catch (e) {
-      console.error("Erreur question suivante", e);
-      setLoadingQuestion(false);
+      } catch (e) {}
     }
   };
 
@@ -184,7 +185,7 @@ export default function GameRoom({ params }: { params: { code: string } }) {
       {/* Sidebar */}
       <div className="w-full md:w-80 flex-shrink-0 order-2 md:order-1">
         <div className="sticky top-8 space-y-6">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border-2 border-blue-100 text-center">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border-2 border-blue-100 text-center text-black">
             <h2 className="text-sm font-black text-blue-600 uppercase tracking-widest mb-1">
                Code de la salle
             </h2>
@@ -204,14 +205,14 @@ export default function GameRoom({ params }: { params: { code: string } }) {
             <PhaseControl
               currentPhase={gameState.phase as Phase}
               onNextQuestion={handleNextQuestion}
-              disabled={loadingQuestion || (!!gameState.currentQuestion && !revealAnswer)}
+              disabled={loadingQuestion || (!!gameState.currentQuestion)}
             />
           )}
         </div>
       </div>
 
       {/* Main Area */}
-      <div className="flex-1 flex flex-col items-center justify-start space-y-12 order-1 md:order-2">
+      <div className="flex-1 flex flex-col items-center justify-start space-y-12 order-1 md:order-2 text-black">
         <div className="w-full max-w-2xl text-center space-y-4">
           <div className="flex justify-center">
             <LetterMatchBadge letter={gameState.letter || null} />
@@ -244,7 +245,7 @@ export default function GameRoom({ params }: { params: { code: string } }) {
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && submitAnswer()}
-                  className="w-full px-8 py-6 rounded-3xl border-4 border-blue-500 outline-none text-2xl font-bold shadow-2xl text-center"
+                  className="w-full px-8 py-6 rounded-3xl border-4 border-blue-500 outline-none text-2xl font-bold shadow-2xl text-center text-black"
                 />
                 <button
                   onClick={submitAnswer}

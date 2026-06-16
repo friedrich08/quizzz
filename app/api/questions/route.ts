@@ -67,8 +67,8 @@ export async function POST(request: Request) {
 
       if (nextPhase === 'B') {
         // Sélection de 4 thèmes aléatoires parmis les questions dispo
-        const themes = [...new Set(allQuestions.map(q => q.theme))];
-        game.category = themes[Math.floor(Math.random() * themes.length)];
+        const themes = Array.from(new Set(allQuestions.map(q => q.theme)));
+        game.category = themes[Math.floor(Math.random() * themes.length)] as string;
       } else if (nextPhase === 'C') {
         game.letter = LETTERS[Math.floor(Math.random() * LETTERS.length)];
       }

@@ -1,0 +1,272 @@
+[
+  {
+    "id": "custom-1",
+    "theme": "Personnalités",
+    "question": "Je suis un homme d'État sud-africain ayant passé 27 ans en prison. Prix Nobel de la paix, je suis devenu le premier président noir de mon pays en 1994. Surnommé Madiba, je suis...",
+    "propositions": ["Desmond Tutu", "Nelson Mandela", "Kofi Annan", "Robert Mugabe"],
+    "answer": "Nelson Mandela",
+    "anecdote": "Il est considéré comme le père de la nation arc-en-ciel.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-2",
+    "theme": "Géographie",
+    "question": "Je suis le plus long fleuve du monde si l'on excepte l'Amazone. Je traverse l'Égypte et je me jette dans la Méditerranée. On dit que l'Égypte est mon don. Je suis...",
+    "propositions": ["Le Congo", "Le Nil", "Le Niger", "Le Zambèze"],
+    "answer": "Le Nil",
+    "anecdote": "Ses crues étaient vitales pour l'agriculture de l'Égypte antique.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-3",
+    "theme": "Sport",
+    "question": "Je suis un footballeur international ivoirien, légende du club de Chelsea. J'ai remporté la Ligue des Champions en 2012 et j'ai été deux fois Ballon d'or africain. Je suis...",
+    "propositions": ["Samuel Eto'o", "Didier Drogba", "Yaya Touré", "Sadio Mané"],
+    "answer": "Didier Drogba",
+    "anecdote": "Il a joué un rôle majeur pour ramener la paix dans son pays en 2006.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-4",
+    "theme": "Musique",
+    "question": "Je suis un chanteur nigérian, l'un des plus grands représentants de l'Afrobeats mondial. Mon album 'Twice as Tall' a remporté un Grammy Award en 2021. On me surnomme l'African Giant. Je suis...",
+    "propositions": ["Wizkid", "Davido", "Burna Boy", "Rema"],
+    "answer": "Burna Boy",
+    "anecdote": "Son vrai nom est Damini Ebunoluwa Ogulu.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-5",
+    "theme": "Cuisine",
+    "question": "Je suis un plat à base de semoule de manioc fermentée, très populaire en Afrique de l'Ouest, particulièrement en Côte d'Ivoire. Je sors souvent accompagné de poisson grillé. Je suis...",
+    "propositions": ["Le Foutou", "L'Attiéké", "Le Placali", "Le Garba"],
+    "answer": "L'Attiéké",
+    "anecdote": "L'attiéké possède une IGP (Indication Géographique Protégée) en Côte d'Ivoire.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-6",
+    "theme": "Géographie",
+    "question": "Je suis le plus grand désert chaud du monde, couvrant une grande partie de l'Afrique du Nord. Mon nom signifie 'désert' en arabe. Je suis...",
+    "propositions": ["Le Kalahari", "Le Sahara", "Le Namib", "Le Gobi"],
+    "answer": "Le Sahara",
+    "anecdote": "Il s'étend sur plus de 9 millions de kilomètres carrés.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-7",
+    "theme": "Musique",
+    "question": "Je suis une chanteuse sud-africaine célèbre pour mon titre 'Pata Pata'. Surnommée 'Mama Africa', j'ai lutté toute ma vie contre l'apartheid. Je suis...",
+    "propositions": ["Brenda Fassie", "Miriam Makeba", "Yvonne Chaka Chaka", "Tems"],
+    "answer": "Miriam Makeba",
+    "anecdote": "Elle a été la première artiste noire à remporter un Grammy aux États-Unis.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-8",
+    "theme": "Cinéma",
+    "question": "Je suis un pays fictif d'Afrique, caché du monde et technologiquement très avancé grâce au vibranium. Je suis dirigé par le roi T'Challa, aussi connu sous le nom de Black Panther. Je suis...",
+    "propositions": ["Le Zamunda", "Le Wakanda", "Le Genosha", "L'Azania"],
+    "answer": "Le Wakanda",
+    "anecdote": "Le salut 'Wakanda Forever' est devenu un symbole culturel mondial.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-9",
+    "theme": "Sport",
+    "question": "Je suis un footballeur camerounais, meilleur buteur de l'histoire des Lions Indomptables. J'ai gagné 3 Ligues des Champions avec le Barça et l'Inter Milan. Je suis aujourd'hui président de la Fecafoot. Je suis...",
+    "propositions": ["Roger Milla", "Samuel Eto'o", "Patrick Mboma", "Rigobert Song"],
+    "answer": "Samuel Eto'o",
+    "anecdote": "Il est le seul joueur à avoir remporté deux triplés consécutifs avec deux clubs différents.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-10",
+    "theme": "Géographie",
+    "question": "Je suis la ville la plus peuplée de la République Démocratique du Congo. Située sur le fleuve Congo, je suis la plus grande ville francophone du monde, devant Paris. Je suis...",
+    "propositions": ["Lubumbashi", "Kinshasa", "Brazzaville", "Goma"],
+    "answer": "Kinshasa",
+    "anecdote": "On appelle ses habitants les Kinois.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-11",
+    "theme": "Animaux",
+    "question": "Je suis le roi de la savane. Mon cri est un rugissement puissant et je vis en groupe appelé troupe. Les mâles possèdent une imposante crinière. Je suis...",
+    "propositions": ["Le Tigre", "Le Lion", "Le Léopard", "Le Guépard"],
+    "answer": "Le Lion",
+    "anecdote": "Ce sont principalement les lionnes qui chassent pour le groupe.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-12",
+    "theme": "Culture",
+    "question": "Je suis une boisson gazeuse de couleur noire, la plus connue au monde. Mon logo est rouge et blanc. On me boit souvent très frais avec des glaçons. Je suis...",
+    "propositions": ["Pepsi", "Coca-Cola", "Fanta", "Sprite"],
+    "answer": "Coca-Cola",
+    "anecdote": "La recette exacte est l'un des secrets les mieux gardés au monde.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-13",
+    "theme": "Technologie",
+    "question": "Je suis le réseau social le plus utilisé au monde pour partager des photos et des vidéos sous forme de stories ou de reels. Je suis la propriété du groupe Meta. Mon icône est un appareil photo coloré. Je suis...",
+    "propositions": ["Snapchat", "TikTok", "Instagram", "Facebook"],
+    "answer": "Instagram",
+    "anecdote": "Lancé en 2010, il a été racheté par Facebook en 2012.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-14",
+    "theme": "Dessins Animés",
+    "question": "Je suis une éponge jaune carrée qui vit dans un ananas au fond de la mer, à Bikini Bottom. Mon meilleur ami est une étoile de mer nommée Patrick. Je suis...",
+    "propositions": ["Bob l'éponge", "Mickey", "Pikachu", "Sonic"],
+    "answer": "Bob l'éponge",
+    "anecdote": "Il travaille comme cuisinier au Crabe Croustillant.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-15",
+    "theme": "Musique",
+    "question": "On m'appelait le Roi de la Pop. Célèbre pour mon gant blanc et mon pas de danse 'Moonwalk', j'ai chanté 'Thriller' et 'Billie Jean'. Je suis...",
+    "propositions": ["Prince", "Michael Jackson", "Stevie Wonder", "Usher"],
+    "answer": "Michael Jackson",
+    "anecdote": "Thriller reste l'album le plus vendu de tous les temps.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-16",
+    "theme": "Géographie",
+    "question": "Je suis le plus haut sommet d'Afrique, situé en Tanzanie. Mon sommet est recouvert de neiges éternelles qui reculent malheureusement avec le climat. Je suis...",
+    "propositions": ["Le Mont Kenya", "Le Kilimandjaro", "Le Mont Atlas", "Le Drakensberg"],
+    "answer": "Le Kilimandjaro",
+    "anecdote": "Il s'élève à 5 895 mètres d'altitude.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-17",
+    "theme": "Sport",
+    "question": "Je suis un footballeur sénégalais, ancien joueur de Liverpool et du Bayern Munich. J'ai été élu deux fois Ballon d'or africain et j'ai remporté la CAN 2022. Je suis...",
+    "propositions": ["El Hadji Diouf", "Sadio Mané", "Kalidou Koulibaly", "Ismaïla Sarr"],
+    "answer": "Sadio Mané",
+    "anecdote": "Il est connu pour sa grande générosité et ses actions caritatives dans son village natal de Bambali.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-18",
+    "theme": "Musique",
+    "question": "Je suis un chanteur congolais, star de la Rumba et du Ndombolo. Surnommé 'L'Aigle' ou 'Dicap la Merveille', j'ai rempli le stade de France en 2024. Je suis...",
+    "propositions": ["Koffi Olomidé", "Fally Ipupa", "Ferré Gola", "Innos'B"],
+    "answer": "Fally Ipupa",
+    "anecdote": "Il a commencé sa carrière dans le groupe Quartier Latin de Koffi Olomidé.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-19",
+    "theme": "Cuisine",
+    "question": "Je suis un plat de riz épicé très populaire au Nigeria, au Ghana et au Sénégal (où on m'appelle Thiéboudienne). Je suis au centre de débats passionnés pour savoir quel pays me cuisine le mieux. Je suis...",
+    "propositions": ["Le Riz Gras", "Le Riz Jollof", "Le Couscous", "Le Mafé"],
+    "answer": "Le Riz Jollof",
+    "anecdote": "La 'Jollof War' est une compétition amicale et humoristique sur les réseaux sociaux entre Nigérians et Ghanéens.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-20",
+    "theme": "Cinéma",
+    "question": "Je suis une actrice mexicano-kényane, révélée par mon rôle dans '12 Years a Slave' qui m'a valu un Oscar. J'ai aussi joué dans 'Black Panther' et 'Star Wars'. Je suis...",
+    "propositions": ["Lupita Nyong'o", "Danai Gurira", "Viola Davis", "Zoe Saldana"],
+    "answer": "Lupita Nyong'o",
+    "anecdote": "Elle a été élue 'plus belle femme du monde' par le magazine People en 2014.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-21",
+    "theme": "Culture",
+    "question": "Je suis l'arbre emblématique des savanes africaines, reconnaissable à mon tronc énorme et mes branches ressemblant à des racines. On m'appelle souvent 'l'arbre de vie'. Je suis...",
+    "propositions": ["L'Acacia", "Le Baobab", "Le Palmier", "L'Eucalyptus"],
+    "answer": "Le Baobab",
+    "anecdote": "Certains spécimens peuvent vivre plus de 2000 ans.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-22",
+    "theme": "Musique",
+    "question": "Je suis une chanteuse béninoise, lauréate de 5 Grammy Awards. Je suis célèbre pour ma voix puissante et mes reprises de titres comme 'Pata Pata' ou 'Malaika'. Je suis...",
+    "propositions": ["Oumou Sangaré", "Angélique Kidjo", "Fatoumata Diawara", "Asa"],
+    "answer": "Angélique Kidjo",
+    "anecdote": "Elle chante dans de nombreuses langues, dont le fon, le yoruba, le français et l'anglais.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-23",
+    "theme": "Histoire",
+    "question": "Je suis une ancienne colonie française d'Afrique du Nord qui a obtenu son indépendance en 1962 après une guerre de 8 ans. Ma capitale est Alger. Je suis...",
+    "propositions": ["Le Maroc", "L'Algérie", "La Tunisie", "La Libye"],
+    "answer": "L'Algérie",
+    "anecdote": "C'est le plus grand pays d'Afrique par sa superficie.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-24",
+    "theme": "Sport",
+    "question": "Je suis un footballeur égyptien, star du club de Liverpool. Surnommé 'The Egyptian King', je suis l'un des meilleurs buteurs de l'histoire de la Premier League. Je suis...",
+    "propositions": ["Riyad Mahrez", "Mohamed Salah", "Achraf Hakimi", "Victor Osimhen"],
+    "answer": "Mohamed Salah",
+    "anecdote": "Il est une véritable icône nationale en Égypte.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-25",
+    "theme": "Technologie",
+    "question": "Je suis une application de messagerie instantanée, propriété de Meta, permettant d'envoyer des messages, des photos et de passer des appels gratuitement via internet. Mon logo est un téléphone blanc dans une bulle verte. Je suis...",
+    "propositions": ["Telegram", "WhatsApp", "Viber", "Signal"],
+    "answer": "WhatsApp",
+    "anecdote": "Elle compte plus de 2 milliards d'utilisateurs actifs dans le monde.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-26",
+    "theme": "Cuisine",
+    "question": "Je suis un fruit tropical à la peau rugueuse et à la chair jaune très sucrée. Je possède une touffe de feuilles piquantes au sommet. On m'utilise souvent pour faire des jus ou des desserts. Je suis...",
+    "propositions": ["La Mangue", "L'Ananas", "La Papaye", "Le Goyave"],
+    "answer": "L'Ananas",
+    "anecdote": "En Afrique de l'Ouest, la Côte d'Ivoire est l'un des principaux exportateurs.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-27",
+    "theme": "Animaux",
+    "question": "Je suis le plus grand animal terrestre. Je possède une trompe et de grandes défenses en ivoire. Mes oreilles sont très larges pour m'aider à me rafraîchir. Je suis...",
+    "propositions": ["Le Rhinocéros", "L'Éléphant", "L'Hippopotame", "La Girafe"],
+    "answer": "L'Éléphant",
+    "anecdote": "Un éléphant adulte peut consommer jusqu'à 200 kg de nourriture par jour.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-28",
+    "theme": "Loisirs",
+    "question": "Je suis une console de jeux vidéo japonaise sortie en 2020. Très difficile à trouver à mon lancement, je possède des manettes appelées DualSense. Je suis la...",
+    "propositions": ["Xbox Series", "Nintendo Switch", "PlayStation 5", "GameCube"],
+    "answer": "PlayStation 5",
+    "anecdote": "On l'appelle souvent plus simplement la PS5.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-29",
+    "theme": "Séries",
+    "question": "Je suis une série espagnole sur Netflix racontant l'histoire d'un groupe de braqueurs qui attaquent la Fabrique nationale de la monnaie. Nous portons des masques de Dalí et des combinaisons rouges. Je suis...",
+    "propositions": ["Lupin", "La Casa de Papel", "Elite", "Squid Game"],
+    "answer": "La Casa de Papel",
+    "anecdote": "La chanson 'Bella Ciao' est devenue un hymne grâce à la série.",
+    "difficulty": "débutant"
+  },
+  {
+    "id": "custom-30",
+    "theme": "Musique",
+    "question": "Je suis un artiste franco-congolais, leader du groupe Sexion d'Assaut. Célèbre pour mes lunettes noires que je n'enlève jamais, j'ai chanté 'Sapés comme jamais' et 'Bella'. Je suis...",
+    "propositions": ["Dadju", "Gims", "Black M", "Soolking"],
+    "answer": "Gims",
+    "anecdote": "Il a vendu plus de 5 millions d'albums au cours de sa carrière solo.",
+    "difficulty": "débutant"
+  }
+]

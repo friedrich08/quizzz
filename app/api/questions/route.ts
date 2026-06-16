@@ -9,17 +9,25 @@ const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 // Chargement des questions locales
 const questionsPath = path.join(process.cwd(), 'data', 'questions.json');
+const customPath = path.join(process.cwd(), 'data', 'custom_questions.json');
 let allQuestions: any[] = [];
+let customQuestions: any[] = [];
 
 try {
   if (fs.existsSync(questionsPath)) {
     allQuestions = JSON.parse(fs.readFileSync(questionsPath, 'utf8'));
+  }
+  if (fs.existsSync(customPath)) {
+    customQuestions = JSON.parse(fs.readFileSync(customPath, 'utf8'));
   }
 } catch (e) {
   console.error("Erreur chargement questions:", e);
 }
 
 function toLongQuestion(q: any): string {
+  // Si c'est déjà une question personnalisée "longue", on la renvoie telle quelle
+  if (q.id && q.id.toString().startsWith('custom-')) return q.question;
+
   let longQ = `[${q.theme}] Top ! `;
   
   // Utilisation de l'anecdote comme premier indice s'il est assez long
@@ -66,8 +74,10 @@ export async function POST(request: Request) {
       }
 
       if (nextPhase === 'B') {
-        // Sélection de 4 thèmes aléatoires parmis les questions dispo
-        const themes = Array.from(new Set(allQuestions.map(q => q.theme)));
+        // Sélection de thèmes uniques parmis les questions dispo
+        const themes = allQuestions
+          .map(q => q.theme)
+          .filter((value, index, self) => self.indexOf(value) === index);
         game.category = themes[Math.floor(Math.random() * themes.length)] as string;
       } else if (nextPhase === 'C') {
         game.letter = LETTERS[Math.floor(Math.random() * LETTERS.length)];
@@ -80,30 +90,62 @@ export async function POST(request: Request) {
       });
     }
 
-    // 2. Sélection de la question dans la base locale
-    let filtered = allQuestions;
+    // 2. Sélection de la question
+    let selectedQuestion: Question | null = null;
 
-    if (game.phase === 'B' && game.category) {
-      filtered = allQuestions.filter(q => q.theme === game.category);
-    } else if (game.phase === 'C' && game.letter) {
-      filtered = allQuestions.filter(q => 
-        q.answer.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").startsWith(game.letter!.toLowerCase())
-      );
+    // Priorité aux questions "Custom" (Mainstream/Afrique) pour Phase A et C
+    const useCustom = Math.random() < 0.4 && customQuestions.length > 0 && game.phase !== 'B';
+    
+    if (useCustom) {
+      let filteredCustom = customQuestions;
+      if (game.phase === 'C' && game.letter) {
+        filteredCustom = customQuestions.filter(q => 
+          q.answer.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").startsWith(game.letter!.toLowerCase())
+        );
+      }
+      
+      if (filteredCustom.length > 0) {
+        const rawQ = filteredCustom[Math.floor(Math.random() * filteredCustom.length)];
+        selectedQuestion = {
+          category: rawQ.theme,
+          type: 'multiple',
+          difficulty: rawQ.difficulty,
+          question: rawQ.question,
+          correct_answer: rawQ.answer,
+          incorrect_answers: rawQ.propositions.filter((p: string) => p !== rawQ.answer)
+        };
+      }
     }
 
-    if (filtered.length === 0) filtered = allQuestions; // Fallback
+    if (!selectedQuestion) {
+      let filtered = allQuestions;
 
-    const randomIdx = Math.floor(Math.random() * filtered.length);
-    const rawQ = filtered[randomIdx];
+      if (game.phase === 'B' && game.category) {
+        filtered = allQuestions.filter(q => q.theme === game.category);
+      } else if (game.phase === 'C' && game.letter) {
+        filtered = allQuestions.filter(q => 
+          q.answer.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").startsWith(game.letter!.toLowerCase())
+        );
+      } else {
+        // Phase A : on privilégie le niveau débutant pour que ce soit fun
+        const deb = allQuestions.filter(q => q.difficulty === 'débutant');
+        if (deb.length > 0 && Math.random() < 0.7) filtered = deb;
+      }
 
-    const selectedQuestion: Question = {
-      category: rawQ.theme,
-      type: 'multiple',
-      difficulty: rawQ.difficulty,
-      question: toLongQuestion(rawQ),
-      correct_answer: rawQ.answer,
-      incorrect_answers: rawQ.propositions.filter((p: string) => p !== rawQ.answer)
-    };
+      if (filtered.length === 0) filtered = allQuestions;
+
+      const randomIdx = Math.floor(Math.random() * filtered.length);
+      const rawQ = filtered[randomIdx];
+
+      selectedQuestion = {
+        category: rawQ.theme,
+        type: 'multiple',
+        difficulty: rawQ.difficulty,
+        question: toLongQuestion(rawQ),
+        correct_answer: rawQ.answer,
+        incorrect_answers: rawQ.propositions.filter((p: string) => p !== rawQ.answer)
+      };
+    }
 
     if (selectedQuestion) {
       game.currentQuestion = selectedQuestion;
